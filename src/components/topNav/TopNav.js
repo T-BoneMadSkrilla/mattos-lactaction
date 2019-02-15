@@ -18,7 +18,7 @@ class TopNav extends Component {
                 </div>
 
                 <div className='topPartNavSpacing'>
-                <Link to='/'>
+                <Link to='/profile'>
                 <div className='topPartNavProfilePicture'></div>
                 </Link>
                 </div>
@@ -30,9 +30,9 @@ class TopNav extends Component {
                 <div className='bottomPartNav'>
                 <Link to='/getsupport' className='bottomPartNavMainRoutes'>Get Support</Link>
                 <Link to='/breastfriend' className='bottomPartNavMainRoutes'> Breastfriend Journal </Link>
-                <Link to='/' className='bottomPartNavMainRoutes'> Find a Milky Mate </Link>
-                <Link to='/' className='bottomPartNavMainRoutes'> Insights </Link>
-                <Link to='/' className='bottomPartNavMainRoutes'> Community </Link>
+                <Link to='/milkymate' className='bottomPartNavMainRoutes'> Find a Milky Mate </Link>
+                <Link to='/insights' className='bottomPartNavMainRoutes'> Insights </Link>
+                <Link to='/community' className='bottomPartNavMainRoutes'> Community </Link>
                 </div>
 
                 <div className='secondDividerTopNav'></div>

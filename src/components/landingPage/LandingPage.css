@@ -9,15 +9,15 @@
 
 .relativeTopOfLandingPage{
     position: relative;
-    left: 10%;
+    left: 15%;
 }
 
 .heroImgLandingPage{
     margin: 0 auto;
-    object-fit: fill;
+    object-fit: cover;
     overflow: hidden;
-    height: 97vh;
-    width: 80vw;
+    height: 90vh;
+    width: 70vw;
 }
 
 .absoluteInformationAboveHeroImgLandingPage{
