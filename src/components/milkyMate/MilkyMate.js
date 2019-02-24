@@ -12,3 +12,5 @@ class MilkyMate extends Component {
 }
 
 export default MilkyMate;
+
+//geo location

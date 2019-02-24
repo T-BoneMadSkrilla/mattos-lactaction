@@ -4,10 +4,12 @@ class Community extends Component{
     render(){
         return(
             <div>
-                Community
+                Community 
             </div>
         )
     }
 }
 
 export default Community;
+
+//forum section for the app
