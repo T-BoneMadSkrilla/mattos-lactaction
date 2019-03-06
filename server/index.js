@@ -1,66 +1,88 @@
 require('dotenv').config()
 
 const express = require('express');
-const bodyParser= require('body-parser')
-// const massive = require('massive');
+const {json} = require('body-parser');
+const massive = require('massive');
 const cors = require('cors');
 const app = express();
-
-const MongoClient = require('mongodb').MongoClient
-var ObjectID = require('mongodb').ObjectID;
-
-
-app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({extended: true}));
-
-// app.use(json());
-app.use(cors());
-
-// massive( process.env.CONNECTION_STRING).then( dbInstance =>{
-    //     app.set('db', dbInstance);
-    
-    // }).catch(err => console.log(err));
-    
-    //endpoints
-    
-    // const port =  3050;
-
-    MongoClient.connect(process.env.CONNECTION_STRING, (err, db) => {
-        var dbase = db.db("crud");
-        if (err) return console.log(err)
-        app.listen(3000, () => {
-          console.log('app working on 3000')
-        })
-      })
-
-      app.get('/users', (req, res) => {
-        dbase.collection('users').find().toArray( (err, results) => {
-          res.send(results)
-        });
-    });
-
-      app.post('/users/add', (req, res) => {
-    
-        var users = {
-          name: req.body.name,
-          age: req.body.age,
-          email_address: req.body.email_address,
-          user_id: req.body.user_id ++, 
-          pic: req.body.pic,
-          user_type: req.body.user_type,
-          date: req.body.date,
-          location: req.body.location
-        };
-    
-        dbase.collection("users").save(users, (err, result) => {
-          if(err) {
-            console.log(err);
-          }
-    
-          res.send('user added successfully');
-        });
-      });
+const session = require('express-session');
+const passport = require('passport');
+const Auth0Strategy = require('passport-auth0');
+const path = require('path')
 
 
 const port = 3050;
-app.listen( port, () => { console.log(`Server listening on port${port}.`);});
+
+app.use( express.static( `${__dirname}/../build/` ) );
+app.use(require("body-parser").text());
+
+app.use(json());
+app.use(cors());
+
+app.use( session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false
+}));
+
+app.use( passport.initialize() );
+app.use( passport.session() );
+
+passport.use( new Auth0Strategy({
+  domain:       process.env.DOMAIN,
+  clientID:     process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  callbackURL:  '/login',
+  scope: "openid email profile"
+ },
+ function(_, __, ___, profile, done) {
+  //  let userData = profile._json
+   return done(null, profile);
+ }
+) );
+
+passport.serializeUser( (user, done) => {
+    const db = app.get('db');
+console.log(`play o' play`,user)
+    db.get_auth(user.id).then( response =>{
+      if(!response[0]){
+        db.add_auth(user.emails[0].value, user.id).then(
+          res=> done(null, res[0])
+          .catch( err => {done(err,null)})
+        )
+      } else {
+        return done(null, response[0])
+      }}
+    ).catch(err=> done(err,null))
+  });
+
+passport.deserializeUser( (obj, done) => {
+        done( null, obj );
+      });
+      
+      massive(process.env.CONNECTION_STRING).then(dbInstance => {
+              app.set('db', dbInstance)
+        }).catch(err => console.log(err))
+        
+        app.get( '/login',
+        passport.authenticate('auth0',
+          { successRedirect: process.env.FRONT_END + '/profile', failureRedirect: '/'}
+        )
+      );
+
+      app.get('/api/getuser/', ( req, res, next) => { //just a test
+        console.log(req.user)
+        if ( !req.user ) {
+          res.redirect('/');
+        } else {
+          res.status(200).send( JSON.stringify( req.user, null, 10 ) );
+        }
+      });
+
+
+app.get('*', (req, res)=>{
+  const index = path.join(__dirname, 'build', 'index.html');
+  res.sendFile(index);
+});
+
+app.listen(port, ()=> console.log(`listening to ${port}`));

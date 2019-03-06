@@ -14,7 +14,7 @@ class LandingPage extends Component{
 
                 <div className='findAMilkyMate'>Find a MilkyMate</div>
                 <div>Connect with local milk donors & recipients</div>
-                <input placeholder='Search by City, Address, Zip' className='searchLandingPage'></input>
+                <input placeholder='Search by Zip code' className='searchLandingPage'></input>
                 </div>
 
                 </div>
@@ -32,7 +32,7 @@ class LandingPage extends Component{
                     in a Breast Friend</div>
                 <div className='descriptionTwoLandingPage'> An Interactive Web App for all <br></br>Your Human Milk Feeding Needs</div>
                 <div className='createUser'>
-                    <a>Login/sign up</a>
+                    <a href={process.env.REACT_APP_LOGIN}>Login/sign up</a>
                 </div>
                 </div>
 
