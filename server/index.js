@@ -44,9 +44,10 @@ passport.use( new Auth0Strategy({
 passport.serializeUser( (user, done) => {
     const db = app.get('db');
 console.log(`play o' play`,user)
+// console.log(user.name.givenName)
     db.get_auth(user.id).then( response =>{
       if(!response[0]){
-        db.add_auth(user.emails[0].value, user.id).then(
+        db.add_auth(user.emails[0].value, user.id, user.picture, user.name.givenName).then(
           res=> done(null, res[0])
           .catch( err => {done(err,null)})
         )
@@ -59,6 +60,7 @@ console.log(`play o' play`,user)
 passport.deserializeUser( (obj, done) => {
         done( null, obj );
       });
+      const {getUser} = require('./controller');
       
       massive(process.env.CONNECTION_STRING).then(dbInstance => {
               app.set('db', dbInstance)
@@ -70,19 +72,24 @@ passport.deserializeUser( (obj, done) => {
         )
       );
 
-      app.get('/api/getuser/', ( req, res, next) => { //just a test
-        console.log(req.user)
-        if ( !req.user ) {
-          res.redirect('/');
-        } else {
-          res.status(200).send( JSON.stringify( req.user, null, 10 ) );
-        }
-      });
+      // app.get('/api/getuser/', ( req, res, next) => { //just a test
+      //   console.log(req.user)
+      //   if ( !req.user ) {
+      //     res.redirect('/');
+      //   } else {
+      //     res.status(200).send( JSON.stringify( req.user, null, 10 ) );
+      //   }
+      // });
+
+      //endpoints
+      app.get('/api/user', getUser)
+
 
 
 app.get('*', (req, res)=>{
   const index = path.join(__dirname, 'build', 'index.html');
   res.sendFile(index);
 });
+
 
 app.listen(port, ()=> console.log(`listening to ${port}`));

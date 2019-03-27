@@ -1,4 +1,6 @@
 import React from 'react'
+import {Provider} from 'react-redux';
+import store from '../redux/store';
 import {Switch, Route} from 'react-router-dom';
 import LandingPage from '../components/landingPage/LandingPage';
 import BreastFriend from '../components/breastFriend/BreastFriend';
@@ -9,6 +11,7 @@ import Community from '../components/community/Community';
 import Profile from '../components/profile/Profile';
 
 export default (
+    <Provider store = {store}>
     <Switch>
         <Route path='/' exact component={LandingPage}></Route>
         <Route path='/breastfriend' component={BreastFriend}></Route>
@@ -18,4 +21,5 @@ export default (
         <Route path='/community' component={Community}></Route>
         <Route path='/profile' component={Profile}></Route>
     </Switch>
+    </Provider>
 );

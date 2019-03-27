@@ -1,16 +1,92 @@
 import React,{Component} from 'react';
+import axios from 'axios';
+// import {connect} from "react-redux";
+// import getUser from '../../redux/reducer';
 
 class Profile extends Component{
+
+    constructor(){
+        super()
+        this.state = {
+            userType : '', 
+            userZip : '',
+            user : []
+        }
+    }
+
+    componentDidMount(){
+        axios.get('/api/user').then( res => {
+                        this.setState({  
+                            user : res.data
+                        }) 
+                    })
+    }
+
     render(){
+        console.log(this.state.user)
+
+        const user = this.state.user
+
+        const profileSection = user.map((e,i)=> {
+            return(
+                <div key={i}>
+                    <img src={e.user_picture}></img>
+                    <div>{e.user_first_name}</div>
+                </div>
+            )
+        })
+
         return(
             <div>
-                Profile
+                <form>
+
+                    <div>
+                    Do you want to donate your milk?
+                    <label>
+                        <input
+                            type="radio"
+                            name={true}
+                            value={true}
+                            />
+                            Yes
+                    </label>
+                    </div>
+
+                    <div className="form-check">
+                    <label>
+                        <input
+                         type="radio"
+                        name={false}
+                        value={false} 
+                        />
+                        no
+                    </label>
+                    </div>
+
+                    <div className="form-group">
+                    <button className="btn btn-primary mt-2" type="submit">
+                        Save
+                    </button>
+                    </div>
+
+                    </form>
+                {profileSection}
             </div>
         )
     }
 }
 
 export default Profile;
+
+// function mapStatetoProps(state){
+//     return {state};
+// }
+
+// export default connect(
+//     mapStatetoProps, 
+//     { getUser }
+//     )(Profile);
+
 // mongodb 
 
 // I'll have this done by 2/25/2019
